@@ -14,7 +14,11 @@ import SHELF
 
 /// An object in a HOSTESS object graph. The `content` is arbitrary, hinted at by the `type` field.
 public struct HostessObject<Content: Codable> {
+    /// The format version of this HOSTESS object.
+    ///
+    /// This determines whether version-dependent fields and contents are compatible with arbitrary encoded data. If the version of encoded data is incompatible with this, then the encoded data must be migrated or this decoder must be udpated
     let version: SemVer
+    let id: ShelfId
     let type: HostessObjectType
     var content: Content
 }
@@ -55,9 +59,14 @@ extension HostessObject: Encodable {
     
     public func encode(to encoder: any Encoder) throws {
         var container: KeyedEncodingContainer<CodingKeys> = encoder.container(keyedBy: CodingKeys.self)
-        try container.encode(self.version, forKey: CodingKeys.version)
-        try container.encode(self.content, forKey: CodingKeys.content)
-        try container.encode(self.type, forKey: CodingKeys.type)
+        try container.encode(self.version, forKey: .version)
+        try container.encode(self.id, forKey: .id)
+        try container.encode(self.content, forKey: .content)
+        
+        
+        // 0.1.0-specific data
+        
+        try container.encode(self.type, forKey: .type)
     }
 }
 
@@ -66,16 +75,19 @@ extension HostessObject: Encodable {
 extension HostessObject: Decodable {
     public init(from decoder: any Decoder) throws {
         let container: KeyedDecodingContainer<CodingKeys> = try decoder.container(keyedBy: CodingKeys.self)
-        self.version = try container.decode(SemVer.self, forKey: CodingKeys.version)
+        self.version = try container.decode(SemVer.self, forKey: .version)
         
         guard version <= Self.currentVersion else {
             throw DecodeError.incompatibleVersion
         }
         
-        self.content = try container.decode(Content.self, forKey: CodingKeys.content)
+        self.id = try container.decode(ShelfId.self, forKey: .id)
+        self.content = try container.decode(Content.self, forKey: .content)
+        
         
         // 0.1.0-specific data
-        self.type = try container.decode(HostessObjectType.self, forKey: CodingKeys.type)
+        
+        self.type = try container.decode(HostessObjectType.self, forKey: .type)
     }
     
     
