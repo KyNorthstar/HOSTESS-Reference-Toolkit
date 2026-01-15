@@ -43,6 +43,18 @@ public struct HostessTask {
     
     /// How complete is the current task? `0.0`~`1.0`
     public var completionPercentage: CGFloat? = nil
+    
+    
+    public init(id: ShelfId, body: AttributedString, notes: AttributedString? = nil, parent: ShelfId? = nil, subtasks: [ShelfId]? = nil, tags: [ShelfId]? = nil, state: State? = nil, completionPercentage: CGFloat? = nil) {
+        self.id = id
+        self.body = body
+        self.notes = notes
+        self.parent = parent
+        self.subtasks = subtasks
+        self.tags = tags
+        self.state = state
+        self.completionPercentage = completionPercentage
+    }
 }
 
 
