@@ -184,6 +184,14 @@ public extension HostessTask.Completion {
             case .complete:                  .notStarted
             case .dropped:                   .notStarted
             }
+            
+        case .toggleDroppedAndNotStarted:
+            switch self {
+            case .notStarted:                .dropped
+            case .inProgress(percentage: _): .dropped
+            case .complete:                  .dropped
+            case .dropped:                   .notStarted
+            }
         }
     }
     
@@ -200,6 +208,16 @@ public extension HostessTask.Completion {
         /// - `.complete` becomes `.notStarted`
         /// - `.dropped` becomes `.notStarted`
         case toggleCompleteAndNotStarted
+        
+        /// Toggling selects either `.dropped` or `.notStarted`.
+        ///
+        /// Here's how the state changes when you toggle the completion:
+        /// - `.notStarted` becomes `.dropped`
+        /// - `.inProgress` becomes `.dropped`
+        /// - `.complete` becomes `.dropped`
+        /// - `.dropped` becomes `.notStarted`
+        case toggleDroppedAndNotStarted
+        
         
         
         /// A reasonable default toggle behavior.
