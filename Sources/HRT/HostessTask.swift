@@ -39,6 +39,7 @@ public struct HostessTask {
     /// A list of IDs of tags which apply to this task
     public var tags: [ShelfId]? = nil
     
+    /// The current broad state of this task
     public var state: State? = nil
     
     /// How complete is the current task? `0.0`~`1.0`
@@ -60,8 +61,10 @@ public struct HostessTask {
 
 
 public extension HostessTask {
-    /// The current broad state of this task
+    
+    /// The current broad state of a task
     enum State: String {
+        
         /// The task has been created and can currently be worked on
         case open
         
@@ -75,9 +78,14 @@ public extension HostessTask {
 
 
 
-// MARK: - Conveniences
+// MARK: - Completion
 
 public extension HostessTask {
+    
+    /// How complete this task is.
+    ///
+    /// The return value is calculated based on the fields of this task.
+    /// When you set this, the fields of this task are automatically changed to reflect your new value.
     var completion: Completion {
         get {
             guard let state else {
@@ -133,7 +141,7 @@ public extension HostessTask {
     
     
     
-    /// How complete this task is
+    /// How complete a task is
     enum Completion {
         
         /// The task hasn't yet been started
@@ -148,6 +156,56 @@ public extension HostessTask {
         
         /// The task is incomplete but will not be worked on
         case dropped
+    }
+}
+
+
+
+public extension HostessTask.Completion {
+    
+    /// Change this completion value to its inverse.
+    ///
+    /// - Parameter behavior: _optional_ - The exact behavior of toggling this completion. Default to `.default`.
+    mutating func toggle(withBehavior behavior: ToggleBehavior = .default) {
+        self = inverse(withBehavior: behavior)
+    }
+    
+    
+    
+    /// Returns the inverse of this completion
+    ///
+    /// - Parameter behavior: The exact behavior of inverting this completion
+    private func inverse(withBehavior behavior: ToggleBehavior) -> Self {
+        switch behavior {
+        case .toggleCompleteAndNotStarted:
+            switch self {
+            case .notStarted:                .complete
+            case .inProgress(percentage: _): .complete
+            case .complete:                  .notStarted
+            case .dropped:                   .notStarted
+            }
+        }
+    }
+    
+    
+    
+    /// How ``toggle()`` behaves
+    enum ToggleBehavior {
+        
+        /// Toggling selects either `.complete` or `.notStarted`.
+        ///
+        /// Here's how the state changes when you toggle the completion:
+        /// - `.notStarted` becomes `.complete`
+        /// - `.inProgress` becomes `.complete`
+        /// - `.complete` becomes `.notStarted`
+        /// - `.dropped` becomes `.notStarted`
+        case toggleCompleteAndNotStarted
+        
+        
+        /// A reasonable default toggle behavior.
+        ///
+        /// This might change between releases, but will always be a reasonable default toggle behavior that a user might expect
+        public static var `default`: Self { .toggleCompleteAndNotStarted }
     }
 }
 
