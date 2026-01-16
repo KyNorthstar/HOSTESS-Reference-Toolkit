@@ -15,7 +15,7 @@ import SHELF
 public struct HostessTask {
     
     /// Universally identifies this task 
-    public var id: ShelfId
+    public var id: ShelfId = .init()
     
     
     /// The body text of the task
@@ -46,7 +46,7 @@ public struct HostessTask {
     public var completionPercentage: CGFloat? = nil
     
     
-    public init(id: ShelfId, body: AttributedString, notes: AttributedString? = nil, parent: ShelfId? = nil, subtasks: [ShelfId]? = nil, tags: [ShelfId]? = nil, state: State? = nil, completionPercentage: CGFloat? = nil) {
+    public init(id: ShelfId = .init(), body: AttributedString, notes: AttributedString? = nil, parent: ShelfId? = nil, subtasks: [ShelfId]? = nil, tags: [ShelfId]? = nil, state: State? = nil, completionPercentage: CGFloat? = nil) {
         self.id = id
         self.body = body
         self.notes = notes
