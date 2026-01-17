@@ -234,6 +234,7 @@ public extension HostessTask.Completion {
 extension HostessTask: Codable {}
 extension HostessTask: Sendable {}
 extension HostessTask: ShelfData {}
+extension HostessTask: Identifiable {}
 
 extension HostessTask.State: Codable {}
 extension HostessTask.State: Sendable {}
