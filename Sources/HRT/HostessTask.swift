@@ -179,10 +179,12 @@ public extension HostessTask.Completion {
         switch behavior {
         case .toggleCompleteAndNotStarted:
             switch self {
-            case .notStarted:                .complete
-            case .inProgress(percentage: _): .complete
-            case .complete:                  .notStarted
-            case .dropped:                   .notStarted
+            case .notStarted:                   .complete
+          //case .inProgress(percentage: ...0): .complete
+            case .inProgress(percentage: _):    .complete
+            case .inProgress(percentage: 1...): .notStarted
+            case .complete:                     .notStarted
+            case .dropped:                      .notStarted
             }
             
         case .toggleDroppedAndNotStarted:
