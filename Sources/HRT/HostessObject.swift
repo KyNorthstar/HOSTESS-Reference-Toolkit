@@ -12,15 +12,21 @@ import SHELF
 
 
 
-/// An object in a HOSTESS object graph. The `content` is arbitrary, hinted at by the `type` field.
-public struct HostessObject<Content: Codable> {
+/// An object in a HOSTESS object graph. The `payload` is arbitrary, hinted at by the `type` field.
+public struct HostessObject<Payload: Codable> {
     /// The format version of this HOSTESS object.
     ///
     /// This determines whether version-dependent fields and contents are compatible with arbitrary encoded data. If the version of encoded data is incompatible with this, then the encoded data must be migrated or this decoder must be udpated
     let version: SemVer
+    
+    /// This identifies this HOSTESS object universally, so it can be used without context
     let id: ShelfId
+    
+    /// A hint to parsing: what type of HOSTESS object is this?
     let type: HostessObjectType
-    var content: Content
+    
+    /// Arbitrary data, like a task or tasklist
+    var payload: Payload
 }
 
 
@@ -37,11 +43,16 @@ public extension HostessObject {
 
 /// Describes various types of HOSTESS object.
 ///
-/// The format (e.g. Swift type) of `content` fields in ``HostessObject``s should align to this type
+/// The format (e.g. Swift type) of `payload` fields in ``HostessObject``s should align to this type
 public enum HostessObjectType: String, Codable {
     
     /// The prototypical HOSTESS object: a single task
     case task
+    
+    /// A collection of related tasks.
+    ///
+    /// Projects, shopping lists, calendars, mailboxes, etc.
+    case tasklist
 }
 
 
@@ -51,7 +62,7 @@ public enum HostessObjectType: String, Codable {
 extension HostessObject: Encodable {
     enum CodingKeys: String, CodingKey {
         case version = "_v"
-        case content = "_c"
+        case payload = "_c"
         case type    = "t"
         case id      = "id"
     }
@@ -61,7 +72,7 @@ extension HostessObject: Encodable {
         var container: KeyedEncodingContainer<CodingKeys> = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(self.version, forKey: .version)
         try container.encode(self.id, forKey: .id)
-        try container.encode(self.content, forKey: .content)
+        try container.encode(self.payload, forKey: .payload)
         
         
         // 0.1.0-specific data
@@ -82,7 +93,7 @@ extension HostessObject: Decodable {
         }
         
         self.id = try container.decode(ShelfId.self, forKey: .id)
-        self.content = try container.decode(Content.self, forKey: .content)
+        self.payload = try container.decode(Payload.self, forKey: .payload)
         
         
         // 0.1.0-specific data
