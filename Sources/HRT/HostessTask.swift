@@ -79,10 +79,7 @@ public extension HostessTask {
 
 // MARK: - Conformances
 
-extension HostessTask: Codable {}
-extension HostessTask: Sendable {}
-extension HostessTask: ShelfData {}
-extension HostessTask: Identifiable {}
+extension HostessTask: HostessObjectIdealPayload {}
 
 extension HostessTask.State: Codable {}
 extension HostessTask.State: Sendable {}

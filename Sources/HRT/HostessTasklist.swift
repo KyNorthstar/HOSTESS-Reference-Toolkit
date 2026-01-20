@@ -40,7 +40,4 @@ public struct HostessTasklist {
 
 // MARK: - Conformances
 
-extension HostessTasklist: Codable {}
-extension HostessTasklist: Sendable {}
-extension HostessTasklist: ShelfData {}
-extension HostessTasklist: Identifiable {}
+extension HostessTasklist: HostessObjectIdealPayload {}
