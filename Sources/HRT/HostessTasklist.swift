@@ -18,6 +18,8 @@ public struct HostessTasklist {
     public var id: ShelfId = .init()
     
     
+    /// The user-facing name of this tasklist
+    public var name: String
     
     /// This array lists the IDs of all of this tasklist's subtasks.
     public var tasks: [ShelfId]
@@ -26,8 +28,9 @@ public struct HostessTasklist {
     public var tags: [ShelfId]? = nil
     
     
-    public init(id: ShelfId = .init(), tasks: [ShelfId], tags: [ShelfId]? = nil) {
+    public init(id: ShelfId = .init(), name: String, tasks: [ShelfId], tags: [ShelfId]? = nil) {
         self.id = id
+        self.name = name
         self.tasks = tasks
         self.tags = tags
     }
