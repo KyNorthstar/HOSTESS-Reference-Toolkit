@@ -12,11 +12,6 @@ import SHELF
 
 
 
-/// The payload of every HOSTESS object should conform to this
-public typealias HostessPayload = AnyHostessType & Codable
-
-
-
 /// An object in a HOSTESS object graph. The `payload` is arbitrary, hinted at by the `type` field.
 public struct HostessObject<Payload: HostessPayload> {
     /// The format version of this HOSTESS object.
@@ -73,6 +68,11 @@ public enum HostessObjectKind: String {
 public extension HostessObject {
     typealias Kind = HostessObjectKind
 }
+
+
+
+/// The payload of every HOSTESS object should conform to this
+public protocol HostessPayload: AnyHostessType & Codable {}
 
 
 
