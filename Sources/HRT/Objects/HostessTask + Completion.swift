@@ -103,7 +103,10 @@ public extension HostessTask.Completion {
 
 // MARK: - conformance
 
+extension HostessTask.Completion: AnyHostessType {}
 extension HostessTask.Completion: Equatable {}
+
+extension HostessTask.Completion.ToggleBehavior: AnyHostessType {}
 
 
 

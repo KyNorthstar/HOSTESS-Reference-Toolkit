@@ -12,21 +12,34 @@ import SHELF
 
 
 
+/// The payload of every HOSTESS object should conform to this
+public typealias HostessPayload = AnyHostessType & Codable
+
+
+
 /// An object in a HOSTESS object graph. The `payload` is arbitrary, hinted at by the `type` field.
-public struct HostessObject<Payload: Codable> {
+public struct HostessObject<Payload: HostessPayload> {
     /// The format version of this HOSTESS object.
     ///
     /// This determines whether version-dependent fields and contents are compatible with arbitrary encoded data. If the version of encoded data is incompatible with this, then the encoded data must be migrated or this decoder must be udpated
-    let version: SemVer
+    public let version: SemVer
     
     /// This identifies this HOSTESS object universally, so it can be used without context
-    let id: ShelfId
+    public let id: ShelfId
     
     /// A hint to parsing: what type of HOSTESS object is this?
-    let type: HostessObjectType
+    public let type: HostessObjectKind
     
     /// Arbitrary data, like a task or tasklist
-    var payload: Payload
+    public var payload: Payload
+    
+    
+    public init(version: SemVer, id: ShelfId, type: HostessObjectKind, payload: Payload) {
+        self.version = version
+        self.id = id
+        self.type = type
+        self.payload = payload
+    }
 }
 
 
@@ -44,7 +57,7 @@ public extension HostessObject {
 /// Describes various types of HOSTESS object.
 ///
 /// The format (e.g. Swift type) of `payload` fields in ``HostessObject``s should align to this type
-public enum HostessObjectType: String, Codable {
+public enum HostessObjectKind: String {
     
     /// The prototypical HOSTESS object: a single task
     case task
@@ -57,10 +70,24 @@ public enum HostessObjectType: String, Codable {
 
 
 
-// MARK: - Conformances
+public extension HostessObject {
+    typealias Kind = HostessObjectKind
+}
+
+
+
+// MARK: - conformances
+
+extension HostessObject: AnyHostessType {}
+extension HostessObject: ShelfData {}
+
+extension HostessObjectKind: AnyHostessType {}
+extension HostessObjectKind: Codable {}
+
+
 
 extension HostessObject: Encodable {
-    enum CodingKeys: String, CodingKey {
+    enum CodingKeys: String, AnyHostessType, CodingKey {
         case version = "_v"
         case payload = "_c"
         case type    = "t"
@@ -98,12 +125,12 @@ extension HostessObject: Decodable {
         
         // 0.1.0-specific data
         
-        self.type = try container.decode(HostessObjectType.self, forKey: .type)
+        self.type = try container.decode(HostessObjectKind.self, forKey: .type)
     }
     
     
     
-    public enum DecodeError: Error {
+    public enum DecodeError: AnyHostessType, Error {
         case incompatibleVersion
     }
 }

@@ -40,4 +40,4 @@ public struct HostessTasklist {
 
 // MARK: - Conformances
 
-extension HostessTasklist: HostessObjectIdealPayload {}
+extension HostessTasklist: HostessObject.IdealPayload {}

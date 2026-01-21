@@ -79,7 +79,7 @@ public extension HostessTask {
 
 // MARK: - Conformances
 
-extension HostessTask: HostessObjectIdealPayload {}
+extension HostessTask: HostessObject.IdealPayload {}
 
+extension HostessTask.State: AnyHostessType {}
 extension HostessTask.State: Codable {}
-extension HostessTask.State: Sendable {}

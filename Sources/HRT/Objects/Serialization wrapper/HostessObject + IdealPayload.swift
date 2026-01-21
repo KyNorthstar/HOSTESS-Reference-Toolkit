@@ -17,4 +17,4 @@ public extension HostessObject {
 
 
 
-public typealias HostessObjectIdealPayload = Codable & Sendable & ShelfData & Identifiable
+public typealias HostessObjectIdealPayload = AnyHostessType & Codable & Identifiable & ShelfData
