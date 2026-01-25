@@ -112,6 +112,47 @@ extension HostessTask.Completion.ToggleBehavior: AnyHostessType {}
 
 // MARK: - HostessTask integration
 
+public extension HostessTask.Completion {
+    /// Uses the two given signals to build a more-useful single "completion" value
+    ///
+    /// - Parameters:
+    ///   - state:                The general state of a task. `nil` indicates unknown or unimportant
+    ///   - completionPercentage: how complete a task is. `nil` indicates that unknown or not applicable
+    init(taskState state: HostessTask.State?, completionPercentage: CGFloat?) {
+        guard let state else {
+            if let completionPercentage {
+                self = .inProgress(percentage: completionPercentage)
+            }
+            else {
+                self = .notStarted
+            }
+            return
+        }
+        
+        switch state {
+        case .open:
+            if let completionPercentage,
+               completionPercentage > 0
+            {
+                if completionPercentage > 1 {
+                    self = .complete
+                }
+                else {
+                    self = .inProgress(percentage: completionPercentage)
+                }
+            }
+            else {
+                self = .notStarted
+            }
+            
+        case .complete: self = .complete
+        case .dropped: self = .dropped
+        }
+    }
+}
+
+
+
 public extension HostessTask {
     
     /// How complete this task is.
@@ -120,54 +161,50 @@ public extension HostessTask {
     /// When you set this, the fields of this task are automatically changed to reflect your new value.
     var completion: Completion {
         get {
-            guard let state else {
-                if let completionPercentage {
-                    return .inProgress(percentage: completionPercentage)
-                }
-                else {
-                    return .notStarted
-                }
-            }
-            
-            switch state {
-            case .open:
-                if let completionPercentage,
-                   completionPercentage > 0
-                {
-                    if completionPercentage > 1 {
-                        return .complete
-                    }
-                    else {
-                        return .inProgress(percentage: completionPercentage)
-                    }
-                }
-                else {
-                    return .notStarted
-                }
-                
-            case .complete: return .complete
-            case .dropped: return .dropped
-            }
+            .init(taskState: state, completionPercentage: completionPercentage)
         }
         
         set {
-            switch newValue {
-            case .notStarted:
-                self.state = .open
-                self.completionPercentage = nil
-                
-            case .inProgress(percentage: let percentage):
-                self.state = .open
-                self.completionPercentage = percentage
-                
-            case .complete:
-                self.state = .complete
-                self.completionPercentage = 1
-                
-            case .dropped:
-                self.state = .dropped
-                self.completionPercentage = nil
-            }
+            self.state = newValue.taskState
+            self.completionPercentage = newValue.completionPercentage
+        }
+    }
+}
+
+
+
+// MARK: - Return to primitives
+
+public extension HostessTask.State {
+    /// Creates a task state analogous to the given task completion 
+    init(_ completion: HostessTask.Completion) {
+        self = switch completion {
+        case .notStarted:                .open
+        case .inProgress(percentage: _): .open
+        case .complete:                  .complete
+        case .dropped:                   .dropped
+        }
+    }
+}
+
+public extension HostessTask.Completion {
+    /// Converts this completion into a task's state vlaue
+    var taskState: HostessTask.State {
+        .init(self)
+    }
+    
+    
+    /// Extracts only the percentage view of completion, for use in places (like ``HostessTask``) where the percentage completion is separate from the task state
+    var completionPercentage: CGFloat? {
+        switch self {
+        case .notStarted:
+            nil
+        case .inProgress(let percentage):
+            percentage
+        case .complete:
+            1
+        case .dropped:
+            nil
         }
     }
 }
