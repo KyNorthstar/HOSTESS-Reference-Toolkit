@@ -7,12 +7,17 @@
 
 import Foundation
 
+import Either
 import SHELF
 
 
 
 /// A task in HOSTESS
 public struct HostessTask {
+    
+    public typealias Parent = ShelfObjectReference<HostessTaskParent>
+    
+    
     
     /// Universally identifies this task 
     public var id: ShelfId = .init()
@@ -27,7 +32,7 @@ public struct HostessTask {
     /// Each task must be a child of something (usually a tasklist or another task). This is the ID of that.
     ///
     /// - Note: It's possible for semi-orphaned tasks to exist, which have this task's ID in its subtasks array, but this field is some other ID. In that case, the graph is in an invalid state in need of repair. It's still worth attempting to show such tasks to the user in a way they might expect.
-    public var parent: ShelfId
+    public var parent: Parent
     
     /// If this task contains child tasks, this array lists the IDs of all of those.
     /// This is `nil` or empty when this task has no child tasks.
@@ -45,7 +50,7 @@ public struct HostessTask {
     public var completionPercentage: CGFloat? = nil
     
     
-    public init(id: ShelfId = .init(), body: AttributedString, notes: AttributedString? = nil, parent: ShelfId, subtasks: [ShelfId]? = nil, tags: [ShelfId]? = nil, state: State? = nil, completionPercentage: CGFloat? = nil) {
+    public init(id: ShelfId = .init(), body: AttributedString, notes: AttributedString? = nil, parent: Parent, subtasks: [ShelfId]? = nil, tags: [ShelfId]? = nil, state: State? = nil, completionPercentage: CGFloat? = nil) {
         self.id = id
         self.body = body
         self.notes = notes
@@ -74,6 +79,13 @@ public extension HostessTask {
         case dropped
     }
 }
+
+
+
+// MARK: - Ancillary types
+
+/// Any type which can be the parent of a task
+public typealias HostessTaskParent = Either<HostessTask, HostessTasklist>
 
 
 
