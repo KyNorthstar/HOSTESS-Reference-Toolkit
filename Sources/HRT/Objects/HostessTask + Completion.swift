@@ -37,7 +37,7 @@ public extension HostessTask.Completion {
     ///
     /// - Parameter behavior: _optional_ - The exact behavior of toggling this completion. Default to `.default`.
     mutating func toggle(withBehavior behavior: ToggleBehavior = .default) {
-        self = inverse(withBehavior: behavior)
+        self = toggled(withBehavior: behavior)
     }
     
     
@@ -45,7 +45,7 @@ public extension HostessTask.Completion {
     /// Returns the inverse of this completion
     ///
     /// - Parameter behavior: The exact behavior of inverting this completion
-    private func inverse(withBehavior behavior: ToggleBehavior) -> Self {
+    func toggled(withBehavior behavior: ToggleBehavior = .default) -> Self {
         switch behavior {
         case .toggleCompleteAndNotStarted:
             switch self {
