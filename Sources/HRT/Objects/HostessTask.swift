@@ -16,6 +16,8 @@ import SHELF
 public struct HostessTask {
     
     public typealias Parent = ShelfObjectReference<HostessTaskParent>
+    public typealias Subtask = ShelfObjectReference<HostessTask>
+    public typealias Tag = ShelfObjectReference<HostessTag>
     
     
     
@@ -38,10 +40,10 @@ public struct HostessTask {
     /// This is `nil` or empty when this task has no child tasks.
     ///
     /// - Note: It's possible for semi-orphaned tasks to exist, which have this task's ID as a parent ID, but which don't appear in this array. In that case, the graph is in an invalid state in need of repair. It's still worth attempting to show such tasks to the user in a way they might expect.
-    public var subtasks: [ShelfId]? = nil
+    public var subtasks: [Subtask]? = nil
     
     /// A list of IDs of tags which apply to this task
-    public var tags: [ShelfId]? = nil
+    public var tags: [Tag]? = nil
     
     /// The current broad state of this task
     public var state: State? = nil
@@ -50,7 +52,7 @@ public struct HostessTask {
     public var completionPercentage: CGFloat? = nil
     
     
-    public init(id: ShelfId = .init(), body: AttributedString, notes: AttributedString? = nil, parent: Parent, subtasks: [ShelfId]? = nil, tags: [ShelfId]? = nil, state: State? = nil, completionPercentage: CGFloat? = nil) {
+    public init(id: ShelfId = .init(), body: AttributedString, notes: AttributedString? = nil, parent: Parent, subtasks: [ShelfObjectReference<HostessTask>]? = nil, tags: [ShelfObjectReference<HostessTag>]? = nil, state: State? = nil, completionPercentage: CGFloat? = nil) {
         self.id = id
         self.body = body
         self.notes = notes
@@ -67,17 +69,7 @@ public struct HostessTask {
 public extension HostessTask {
     
     /// The current broad state of a task
-    enum State: String {
-        
-        /// The task has been created and can currently be worked on
-        case open
-        
-        /// The task has been completed, successfully or not
-        case complete
-        
-        /// The task was not completed and is no longer going to be worked on
-        case dropped
-    }
+    typealias State = HostessObjectState
 }
 
 
@@ -92,6 +84,3 @@ public typealias HostessTaskParent = Either<HostessTask, HostessTasklist>
 // MARK: - Conformances
 
 extension HostessTask: HostessObject.IdealPayload {}
-
-extension HostessTask.State: AnyHostessType {}
-extension HostessTask.State: Codable {}
