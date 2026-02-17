@@ -52,7 +52,7 @@ public struct HostessTask {
     public var completionPercentage: CGFloat? = nil
     
     
-    public init(id: ShelfId = .init(), body: AttributedString, notes: AttributedString? = nil, parent: Parent, subtasks: [ShelfObjectReference<HostessTask>]? = nil, tags: [ShelfObjectReference<HostessTag>]? = nil, state: State? = nil, completionPercentage: CGFloat? = nil) {
+    public init(id: ShelfId = .init(), body: AttributedString, notes: AttributedString? = nil, parent: Parent, subtasks: [Subtask]? = nil, tags: [Tag]? = nil, state: State? = nil, completionPercentage: CGFloat? = nil) {
         self.id = id
         self.body = body
         self.notes = notes
