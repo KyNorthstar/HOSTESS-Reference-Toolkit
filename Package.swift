@@ -20,6 +20,7 @@ let package = Package(
         .package(url: "git@github.com:KyNorthstar/SHELF.git", branch: "production"),
         .package(url: "git@github.com:RougeWare/Swift-Either.git", from: "2.0.0"),
         .package(url: "git@github.com:RougeWare/Swift-SemVer.git", from: "3.0.0-Beta.5"),
+        .package(url: "git@github.com:RougeWare/Swift-Concurrency-Tools.git", branch: "feature/AsyncBinding"),
     ],
     targets: [
         // Targets are the basic building blocks of a package, defining a module or a test suite.
@@ -30,6 +31,7 @@ let package = Package(
                 .product(name: "Either", package: "Swift-Either"),
                 .product(name: "SHELF", package: "SHELF"),
                 .product(name: "SemVer", package: "Swift-SemVer"),
+                .product(name: "ConcurrencyTools", package: "Swift-Concurrency-Tools"),
             ]
         ),
         .testTarget(

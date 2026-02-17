@@ -1,5 +1,5 @@
 {
-  "originHash" : "33c184d0dbda0ded56f04750ead55072dd13c023f6e222696d0f72731af6dd95",
+  "originHash" : "19362706c7f3b008e88aaa9f9a003c9dfcde3711ba5721efd5339e3c2b2037e6",
   "pins" : [
     {
       "identity" : "shelf",
@@ -20,6 +20,15 @@
       }
     },
     {
+      "identity" : "swift-concurrency-tools",
+      "kind" : "remoteSourceControl",
+      "location" : "git@github.com:RougeWare/Swift-Concurrency-Tools.git",
+      "state" : {
+        "branch" : "feature/AsyncBinding",
+        "revision" : "bf0e957399af341da4f53960b87714553f7deec2"
+      }
+    },
+    {
       "identity" : "swift-either",
       "kind" : "remoteSourceControl",
       "location" : "git@github.com:RougeWare/Swift-Either.git",
@@ -33,8 +42,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/RougeWare/Swift-Function-Tools.git",
       "state" : {
-        "revision" : "a854f4ed89b7e404019b5a09d24e067acc15432d",
-        "version" : "1.2.4"
+        "branch" : "feature/structured-concurrency",
+        "revision" : "0624bcb264233432fa115e6a900d096d0b0ad7ff"
       }
     },
     {
