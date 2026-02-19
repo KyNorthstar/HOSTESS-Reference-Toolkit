@@ -12,21 +12,22 @@ import ConcurrencyTools
 
 
 
+/// Use this actor to interface with HOSTESS in a nice clean way
 public actor Hostess {
     private var currentShelf: ThrowingAsyncBinding<Shelf, Shelf.InitError>
     
     
-    init(_ shelfGenerator: @escaping ThrowingAsyncBinding<Shelf, Shelf.InitError>.Get) {
+    public init(_ shelfGenerator: @escaping ThrowingAsyncBinding<Shelf, Shelf.InitError>.Get) {
         currentShelf = ThrowingAsyncBinding(shelfGenerator)
     }
     
     
-    init(_ shelf: Shelf) {
+    public init(_ shelf: Shelf) {
         currentShelf = ThrowingAsyncBinding(shelf)
     }
     
     
-    init() {
+    public init() {
         currentShelf = ThrowingAsyncBinding { try! await Shelf() }
     }
 }
