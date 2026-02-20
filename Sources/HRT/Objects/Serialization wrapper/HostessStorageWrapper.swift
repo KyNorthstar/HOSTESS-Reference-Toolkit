@@ -1,5 +1,5 @@
 //
-//  HostessObject.swift
+//  HostessStorageWrapper.swift
 //  HOSTESS Reference Toolkit
 //
 //  Created by Ky on 2026-01-04.
@@ -12,8 +12,13 @@ import SHELF
 
 
 
-/// An object in a HOSTESS object graph. The `payload` is arbitrary, hinted at by the `type` field.
-public struct HostessObject<Payload: HostessPayload> {
+private let currentFormatVersion = SemVer(0,1,0)
+
+
+
+/// Wraps HOSTESS objects to be stored in the object store
+public struct HostessStorageWrapper<Payload: HostessPayload> {
+    
     /// The format version of this HOSTESS object.
     ///
     /// This determines whether version-dependent fields and contents are compatible with arbitrary encoded data. If the version of encoded data is incompatible with this, then the encoded data must be migrated or this decoder must be udpated
@@ -25,11 +30,11 @@ public struct HostessObject<Payload: HostessPayload> {
     /// A hint to parsing: what type of HOSTESS object is this?
     public let type: HostessObjectKind
     
-    /// Arbitrary data, like a task or tasklist
+    /// Arbitrary HOSTESS data, like a task or tasklist
     public var payload: Payload
     
     
-    public init(version: SemVer, id: ShelfId, type: HostessObjectKind, payload: Payload) {
+    public init(version: SemVer = currentVersion, id: ShelfId, type: HostessObjectKind, payload: Payload) {
         self.version = version
         self.id = id
         self.type = type
@@ -39,10 +44,23 @@ public struct HostessObject<Payload: HostessPayload> {
 
 
 
+public extension HostessStorageWrapper
+    where Payload: IdealPayload
+{
+    /// Wraps the given payload in this object, ready to be persisted to the store
+    ///
+    /// - Parameter payload: The HOSTESS object to wrap
+    init(wrapping payload: Payload) {
+        self.init(id: payload.id, type: payload.kind, payload: payload)
+    }
+}
+
+
+
 // MARK: - Compatibility tools
 
-public extension HostessObject {
-    static var currentVersion: SemVer { SemVer(0,1,0) }
+public extension HostessStorageWrapper {
+    static var currentVersion: SemVer { currentFormatVersion }
 }
 
 
@@ -61,32 +79,33 @@ public enum HostessObjectKind: String {
     ///
     /// Projects, shopping lists, calendars, mailboxes, etc.
     case tasklist
+    
+    /// A HOSTESS tag, which can be applied to many other kinds of HOSTESS objects
+    case tag
+    
+    
+    // TODO: How do we represent third-party objects?
 }
 
 
 
-public extension HostessObject {
+public extension HostessStorageWrapper {
     typealias Kind = HostessObjectKind
 }
 
 
 
-/// The payload of every HOSTESS object should conform to this
-public protocol HostessPayload: AnyHostessType & Codable {}
-
-
-
 // MARK: - conformances
 
-extension HostessObject: AnyHostessType {}
-extension HostessObject: ShelfData {}
+extension HostessStorageWrapper: AnyHostessType {}
+extension HostessStorageWrapper: ShelfData {}
 
 extension HostessObjectKind: AnyHostessType {}
 extension HostessObjectKind: Codable {}
 
 
 
-extension HostessObject: Encodable {
+extension HostessStorageWrapper: Encodable {
     enum CodingKeys: String, AnyHostessType, CodingKey {
         case version = "_v"
         case payload = "_c"
@@ -110,13 +129,13 @@ extension HostessObject: Encodable {
 
 
 
-extension HostessObject: Decodable {
+extension HostessStorageWrapper: Decodable {
     public init(from decoder: any Decoder) throws {
         let container: KeyedDecodingContainer<CodingKeys> = try decoder.container(keyedBy: CodingKeys.self)
         self.version = try container.decode(SemVer.self, forKey: .version)
         
-        guard version <= Self.currentVersion else {
-            throw DecodeError.incompatibleVersion
+        guard version <= currentFormatVersion else {
+            throw DecodeError.incompatibleVersion(found: version)
         }
         
         self.id = try container.decode(ShelfId.self, forKey: .id)
@@ -130,7 +149,19 @@ extension HostessObject: Decodable {
     
     
     
-    public enum DecodeError: AnyHostessType, Error {
-        case incompatibleVersion
+    public enum DecodeError: AnyHostessType, LocalizedError {
+        case incompatibleVersion(found: SemVer)
+        
+        
+        public var errorDescription: String? {
+            switch self {
+            case .incompatibleVersion(found: let found):
+                return """
+                    The decoded HOSTESS object was written with an incompatible version of the HOSTESS format: \(found).
+                    This is version \(currentFormatVersion).
+                    Please upgrade HRT to use the current version of the HOSTESS format, or file a bug report if this is the latest version of HRT.
+                    """
+            }
+        }
     }
 }

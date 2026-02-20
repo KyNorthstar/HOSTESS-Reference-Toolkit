@@ -11,10 +11,10 @@ import SHELF
 
 
 
-public extension HostessObject {
-    typealias IdealPayload = HostessObjectIdealPayload
+public extension HostessStorageWrapper {
+    typealias IdealPayload = HostessIdealStoragePayload
 }
 
 
 
-public typealias HostessObjectIdealPayload = HostessPayload & Identifiable & ShelfData
+public typealias HostessIdealStoragePayload = HostessPayload & ShelfData

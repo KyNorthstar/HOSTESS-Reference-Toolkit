@@ -7,8 +7,9 @@
 
 import Foundation
 
-import SHELF
 import ConcurrencyTools
+import FunctionTools
+import SHELF
 
 
 
@@ -75,12 +76,13 @@ private extension Hostess {
         withId id: ShelfId,
         onError: (Shelf.ReadError) -> Failure)
     async throws(Failure) -> Object?
-    where Object: ShelfData,
+    where Object: HostessPayload,
           Failure: Error
     {
         let shelf = try! await currentShelf.wrappedValue
         do {
-            return try await shelf.object(withId: id)
+            let wrapped: HostessStorageWrapper<Object>? = try await shelf.object(withId: id)
+            return wrapped?.payload
         }
         catch {
             throw onError(error)
@@ -92,17 +94,27 @@ private extension Hostess {
         _ object: Object,
         onError: (Shelf.WriteError) -> Failure)
     async throws(Failure)
-    where Object: ShelfData,
+    where Object: HostessIdealStoragePayload,
           Failure: Error
     {
         var shelf = try! await currentShelf.wrappedValue
         do {
-            try await shelf.save(object)
+            try await shelf.save(HostessStorageWrapper(wrapping: object))
             currentShelf.setWrappedValue(shelf)
         }
         catch {
             throw onError(error)
         }
+    }
+}
+
+
+
+public extension Hostess {
+    func any<Persisted>(withId id: ShelfId) async throws(Shelf.ReadError) -> Persisted?
+    where Persisted: HostessPayload
+    {
+        try await object(withId: id, onError: echo)
     }
 }
 

@@ -32,4 +32,6 @@ public struct HostessTag {
 
 // MARK: - Conformances
 
-extension HostessTag: HostessObject.IdealPayload {}
+extension HostessTag: HostessStorageWrapper.IdealPayload {
+    public var kind: HostessObjectKind { .tag }
+}

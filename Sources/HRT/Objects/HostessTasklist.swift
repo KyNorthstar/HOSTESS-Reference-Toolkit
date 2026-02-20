@@ -67,4 +67,6 @@ public extension HostessTasklist {
 
 // MARK: - Conformances
 
-extension HostessTasklist: HostessObject.IdealPayload {}
+extension HostessTasklist: HostessStorageWrapper.IdealPayload {
+    public var kind: HostessObjectKind { .tasklist }
+}

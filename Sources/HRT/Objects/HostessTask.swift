@@ -83,4 +83,6 @@ public typealias HostessTaskParent = Either<HostessTask, HostessTasklist>
 
 // MARK: - Conformances
 
-extension HostessTask: HostessObject.IdealPayload {}
+extension HostessTask: HostessStorageWrapper.IdealPayload {
+    public var kind: HostessObjectKind { .task }
+}
