@@ -7,7 +7,7 @@
       "location" : "git@github.com:KyNorthstar/SHELF.git",
       "state" : {
         "branch" : "production",
-        "revision" : "0ec53324481d2c2c0301a940f884a91a4ddc9003"
+        "revision" : "96973906753d1d76ee82b333d7588668a9a9682c"
       }
     },
     {
@@ -25,7 +25,7 @@
       "location" : "git@github.com:RougeWare/Swift-Concurrency-Tools.git",
       "state" : {
         "branch" : "feature/AsyncBinding",
-        "revision" : "bf0e957399af341da4f53960b87714553f7deec2"
+        "revision" : "f502c280d624deb2208070bb95e9061c023031c8"
       }
     },
     {
@@ -43,7 +43,7 @@
       "location" : "https://github.com/RougeWare/Swift-Function-Tools.git",
       "state" : {
         "branch" : "feature/structured-concurrency",
-        "revision" : "0624bcb264233432fa115e6a900d096d0b0ad7ff"
+        "revision" : "ebe3333c8b260beae93b5319138a05e48b8ef9a7"
       }
     },
     {
@@ -141,8 +141,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/RougeWare/UuidTools.git",
       "state" : {
-        "revision" : "f918c747061df523e9817316459f2d1b5b17bcd8",
-        "version" : "0.4.0"
+        "revision" : "786080022ff97a6fc4454d1a52eeb0e7fed88dd1",
+        "version" : "0.5.0"
       }
     }
   ],

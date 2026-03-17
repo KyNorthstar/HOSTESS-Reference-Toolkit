@@ -100,7 +100,7 @@ private extension Hostess {
         var shelf = try! await currentShelf.wrappedValue
         do {
             try await shelf.save(HostessStorageWrapper(wrapping: object))
-            currentShelf.setWrappedValue(shelf)
+            await currentShelf.setWrappedValue(shelf)
         }
         catch {
             throw onError(error)
