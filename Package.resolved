@@ -1,10 +1,10 @@
 {
-  "originHash" : "19362706c7f3b008e88aaa9f9a003c9dfcde3711ba5721efd5339e3c2b2037e6",
+  "originHash" : "a79641bdce5801d0a64ccb7d8ae94504e4fd0496efdce532d22f55aa554fa8d4",
   "pins" : [
     {
       "identity" : "shelf",
       "kind" : "remoteSourceControl",
-      "location" : "git@github.com:KyNorthstar/SHELF.git",
+      "location" : "https://github.com/KyNorthstar/SHELF.git",
       "state" : {
         "branch" : "production",
         "revision" : "96973906753d1d76ee82b333d7588668a9a9682c"
@@ -15,14 +15,14 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/apple/swift-argument-parser.git",
       "state" : {
-        "revision" : "c5d11a805e765f52ba34ec7284bd4fcd6ba68615",
-        "version" : "1.7.0"
+        "revision" : "626b5b7b2f45e1b0b1c6f4a309296d1d21d7311b",
+        "version" : "1.7.1"
       }
     },
     {
       "identity" : "swift-concurrency-tools",
       "kind" : "remoteSourceControl",
-      "location" : "git@github.com:RougeWare/Swift-Concurrency-Tools.git",
+      "location" : "https://github.com/RougeWare/Swift-Concurrency-Tools.git",
       "state" : {
         "branch" : "feature/AsyncBinding",
         "revision" : "f502c280d624deb2208070bb95e9061c023031c8"
@@ -31,7 +31,7 @@
     {
       "identity" : "swift-either",
       "kind" : "remoteSourceControl",
-      "location" : "git@github.com:RougeWare/Swift-Either.git",
+      "location" : "https://github.com/RougeWare/Swift-Either.git",
       "state" : {
         "revision" : "89bdbb865bde920c8cee7c998c5887869586e0c7",
         "version" : "2.0.0"
@@ -94,7 +94,7 @@
     {
       "identity" : "swift-semver",
       "kind" : "remoteSourceControl",
-      "location" : "git@github.com:RougeWare/Swift-SemVer.git",
+      "location" : "https://github.com/RougeWare/Swift-SemVer.git",
       "state" : {
         "revision" : "adcdc0836253c9bbb5b337eaa9d87553012ae248",
         "version" : "3.0.0-Beta.5"

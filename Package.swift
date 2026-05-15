@@ -17,10 +17,10 @@ let package = Package(
         ),
     ],
     dependencies: [
-        .package(url: "git@github.com:KyNorthstar/SHELF.git", branch: "production"),
-        .package(url: "git@github.com:RougeWare/Swift-Either.git", from: "2.0.0"),
-        .package(url: "git@github.com:RougeWare/Swift-SemVer.git", from: "3.0.0-Beta.5"),
-        .package(url: "git@github.com:RougeWare/Swift-Concurrency-Tools.git", branch: "feature/AsyncBinding"),
+        .package(url: "https://github.com/KyNorthstar/SHELF.git", branch: "production"),
+        .package(url: "https://github.com/RougeWare/Swift-Either.git", from: "2.0.0"),
+        .package(url: "https://github.com/RougeWare/Swift-SemVer.git", from: "3.0.0-Beta.5"),
+        .package(url: "https://github.com/RougeWare/Swift-Concurrency-Tools.git", branch: "feature/AsyncBinding"),
     ],
     targets: [
         // Targets are the basic building blocks of a package, defining a module or a test suite.
