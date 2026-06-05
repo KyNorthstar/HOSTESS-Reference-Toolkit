@@ -11,6 +11,13 @@ import Either
 
 
 
+
+extension Either {
+    
+}
+
+
+
 extension Either: @retroactive Identifiable where Left: Identifiable, Right: Identifiable, Left.ID == Right.ID {
     
     public typealias ID = Left.ID
@@ -30,16 +37,13 @@ extension Either: @retroactive Identifiable where Left: Identifiable, Right: Ide
 
 
 
-extension Either: @retroactive ShelfIdentifiable where Self: Identifiable, Left: ShelfIdentifiable, Right: ShelfIdentifiable, Left.ID == Right.ID {
-    public var id: ShelfId {
-        switch self {
-        case .left(let value):
-            return value.id
-            
-        case .right(let value):
-            return value.id
-        }
-    }
+extension Either: @retroactive ShelfIdentifiable
+where Self: Identifiable,
+      Left: ShelfIdentifiable,
+      Right: ShelfIdentifiable,
+      Left.ID == ShelfId,
+      Right.ID == ShelfId
+{
 }
 
 
