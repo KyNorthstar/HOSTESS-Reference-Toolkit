@@ -73,7 +73,7 @@ public actor Hostess {
 
 private extension Hostess {
     func object<Object, Failure>(
-        withId id: ShelfId,
+        withId id: HostessId,
         onError: (Shelf.ReadError) -> Failure)
     async throws(Failure) -> Object?
     where Object: HostessPayload,
@@ -110,22 +110,12 @@ private extension Hostess {
 
 
 
-public extension Hostess {
-    func any<Persisted>(withId id: ShelfId) async throws(Shelf.ReadError) -> Persisted?
-    where Persisted: HostessPayload
-    {
-        try await object(withId: id, onError: echo)
-    }
-}
-
-
-
 // MARK: - Tasks
 
 // MARK: Fetching
 
 public extension Hostess {
-    func task(withId id: ShelfId) async throws(TaskFetchError) -> HostessTask? {
+    func task(withId id: HostessId) async throws(TaskFetchError) -> HostessTask? {
         try await object(withId: id, onError: { TaskFetchError.shelfError($0) })
     }
 }
@@ -159,7 +149,7 @@ public enum TaskSaveError: Error {
 // MARK: Fetching
 
 public extension Hostess {
-    func tasklist(withId id: ShelfId) async throws(TasklistFetchError) -> HostessTasklist? {
+    func tasklist(withId id: HostessId) async throws(TasklistFetchError) -> HostessTasklist? {
         try await object(withId: id, onError: { TasklistFetchError.shelfError($0) })
     }
 }
@@ -193,7 +183,7 @@ public enum TasklistSaveError: Error {
 // MARK: Fetching
 
 public extension Hostess {
-    func tag(withId id: ShelfId) async throws(TagFetchError) -> HostessTag? {
+    func tag(withId id: HostessId) async throws(TagFetchError) -> HostessTag? {
         try await object(withId: id, onError: { TagFetchError.shelfError($0) })
     }
 }
@@ -217,5 +207,39 @@ public extension Hostess {
 
 
 public enum TagSaveError: Error {
+    case shelfError(Shelf.WriteError)
+}
+
+
+
+// MARK: - Custom objects
+
+// MARK: Fetching
+
+public extension Hostess {
+    func any<Payload: HostessIdealStoragePayload>(withId id: HostessId) async throws(AnyFetchError) -> Payload? {
+        try await object(withId: id, onError: { AnyFetchError.shelfError($0) })
+    }
+}
+
+
+
+public enum AnyFetchError: Error {
+    case shelfError(Shelf.ReadError)
+}
+
+
+
+// MARK: Saving
+
+public extension Hostess {
+    func save<Payload: HostessIdealStoragePayload>(any payload: Payload) async throws(AnySaveError) {
+        try await save(payload, onError: { AnySaveError.shelfError($0) })
+    }
+}
+
+
+
+public enum AnySaveError: Error {
     case shelfError(Shelf.WriteError)
 }

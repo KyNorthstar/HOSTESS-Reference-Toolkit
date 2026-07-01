@@ -11,6 +11,10 @@ import SHELF
 
 
 
+public typealias HostessId = ShelfId
+
+
+
 public extension HostessStorageWrapper {
     typealias IdealPayload = HostessIdealStoragePayload
 }
