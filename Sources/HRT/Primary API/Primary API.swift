@@ -106,6 +106,23 @@ private extension Hostess {
             throw onError(error)
         }
     }
+    
+    
+    func delete<Failure>(
+        objectWithId id: HostessId,
+        onError: (Shelf.DeleteError) -> Failure)
+    async throws(Failure)
+    where Failure: LocalizedError
+    {
+        var shelf = try! await currentShelf.wrappedValue
+        do {
+            try await shelf.delete(objectWithId: id)
+            await currentShelf.setWrappedValue(shelf)
+        }
+        catch {
+            throw onError(error)
+        }
+    }
 }
 
 
@@ -124,6 +141,12 @@ public extension Hostess {
 
 public enum TaskFetchError: LocalizedError {
     case shelfError(Shelf.ReadError)
+    
+    public var errorDescription: String? {
+        switch self {
+        case .shelfError(let error): describe(error)
+        }
+    }
 }
 
 
@@ -156,6 +179,12 @@ public extension Hostess {
 
 public enum TasklistFetchError: LocalizedError {
     case shelfError(Shelf.ReadError)
+    
+    public var errorDescription: String? {
+        switch self {
+        case .shelfError(let error): describe(error)
+        }
+    }
 }
 
 
@@ -188,6 +217,12 @@ public extension Hostess {
 
 public enum TagFetchError: LocalizedError {
     case shelfError(Shelf.ReadError)
+    
+    public var errorDescription: String? {
+        switch self {
+        case .shelfError(let error): describe(error)
+        }
+    }
 }
 
 
@@ -220,6 +255,12 @@ public extension Hostess {
 
 public enum AnyFetchError: LocalizedError {
     case shelfError(Shelf.ReadError)
+    
+    public var errorDescription: String? {
+        switch self {
+        case .shelfError(let error): describe(error)
+        }
+    }
 }
 
 
@@ -241,5 +282,55 @@ public enum AnySaveError: LocalizedError {
         switch self {
         case .shelfError(let error): error.errorDescription
         }
+    }
+}
+
+
+
+// MARK: - Deleting
+
+public extension Hostess {
+    
+    /// Attempts to delete the HOSTESS object with the given ID from the store.
+    ///
+    /// Deletion is kind-agnostic: objects are stored as files keyed by ID, so no type information is needed to remove one.
+    ///
+    /// - Note: This only deletes the one object. Any other objects which reference it (e.g. a tasklist listing a deleted task's ID) are untouched, and are expected to be updated separately by the caller.
+    ///
+    /// - Parameter id: The ID of the object to delete
+    ///
+    /// - Throws: An ``AnyDeleteError`` if any error occurs while attempting to delete the object from the store
+    func delete(objectWithId id: HostessId) async throws(AnyDeleteError) {
+        try await delete(objectWithId: id, onError: { AnyDeleteError.shelfError($0) })
+    }
+}
+
+
+
+public enum AnyDeleteError: LocalizedError {
+    case shelfError(Shelf.DeleteError)
+    
+    public var errorDescription: String? {
+        switch self {
+        case .shelfError(let error): "Could not delete SHELF object: \((error as? LocalizedError)?.errorDescription ?? String(describing: error))"
+        }
+    }
+}
+
+
+// MARK: - Error rendering
+
+/// Renders a SHELF read error with its full underlying cause.
+///
+/// `String(describing:)` is used rather than `localizedDescription` because `DecodingError`'s
+/// localized description is the famously useless "The data couldn't be read", whereas its
+/// full description includes the coding path & the exact key/type that failed.
+private func describe(_ error: Shelf.ReadError) -> String {
+    switch error {
+    case .couldNotReadObjectFile(cause: let cause):
+        "Could not read SHELF object file: \(cause.map { String(describing: $0) } ?? "unknown cause")"
+        
+    case .couldNotParseObject(cause: let cause):
+        "Could not parse SHELF object: \(cause.map { String(describing: $0) } ?? "unknown cause")"
     }
 }
