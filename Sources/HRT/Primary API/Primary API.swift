@@ -77,7 +77,7 @@ private extension Hostess {
         onError: (Shelf.ReadError) -> Failure)
     async throws(Failure) -> Object?
     where Object: HostessPayload,
-          Failure: Error
+          Failure: LocalizedError
     {
         let shelf = try! await currentShelf.wrappedValue
         do {
@@ -95,7 +95,7 @@ private extension Hostess {
         onError: (Shelf.WriteError) -> Failure)
     async throws(Failure)
     where Object: HostessIdealStoragePayload,
-          Failure: Error
+          Failure: LocalizedError
     {
         var shelf = try! await currentShelf.wrappedValue
         do {
@@ -122,7 +122,7 @@ public extension Hostess {
 
 
 
-public enum TaskFetchError: Error {
+public enum TaskFetchError: LocalizedError {
     case shelfError(Shelf.ReadError)
 }
 
@@ -138,9 +138,7 @@ public extension Hostess {
 
 
 
-public enum TaskSaveError: Error {
-    case shelfError(Shelf.WriteError)
-}
+public typealias TaskSaveError = AnySaveError
 
 
 
@@ -156,7 +154,7 @@ public extension Hostess {
 
 
 
-public enum TasklistFetchError: Error {
+public enum TasklistFetchError: LocalizedError {
     case shelfError(Shelf.ReadError)
 }
 
@@ -172,9 +170,7 @@ public extension Hostess {
 
 
 
-public enum TasklistSaveError: Error {
-    case shelfError(Shelf.WriteError)
-}
+public typealias TasklistSaveError = AnySaveError
 
 
 
@@ -190,7 +186,7 @@ public extension Hostess {
 
 
 
-public enum TagFetchError: Error {
+public enum TagFetchError: LocalizedError {
     case shelfError(Shelf.ReadError)
 }
 
@@ -206,9 +202,7 @@ public extension Hostess {
 
 
 
-public enum TagSaveError: Error {
-    case shelfError(Shelf.WriteError)
-}
+public typealias TagSaveError = AnySaveError
 
 
 
@@ -224,7 +218,7 @@ public extension Hostess {
 
 
 
-public enum AnyFetchError: Error {
+public enum AnyFetchError: LocalizedError {
     case shelfError(Shelf.ReadError)
 }
 
@@ -240,6 +234,12 @@ public extension Hostess {
 
 
 
-public enum AnySaveError: Error {
+public enum AnySaveError: LocalizedError {
     case shelfError(Shelf.WriteError)
+    
+    public var errorDescription: String? {
+        switch self {
+        case .shelfError(let error): error.errorDescription
+        }
+    }
 }
